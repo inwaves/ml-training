@@ -1,1 +1,1 @@
-# linalg-practice
+# ml-training
