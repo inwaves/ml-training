@@ -1,4 +1,4 @@
-from lightgbm import LGBMRegressor
+from lightgbm import LGBMRegressor, plot_tree, plot_metric
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import pandas as pd
@@ -6,6 +6,7 @@ import altair as alt
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import graphviz
 
 
 diabetes_df = pd.read_csv('../data/diabetes.csv')
@@ -25,6 +26,8 @@ diabetes_df.corr()
 
 # diabetes_df = diabetes_df.drop('ld_lipo', axis=1)
 diabetes_df = diabetes_df.drop('thyroid_sh', axis=1)
+# diabetes_df = diabetes_df.drop('t_cells', axis=1)
+# diabetes_df = diabetes_df.drop('sex', axis=1)
 
 
 # let's eliminate the predicted column, then split the data
@@ -35,12 +38,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 
 def run_booster(learning_rate):
-    bst = LGBMRegressor(n_estimators=500, learning_rate=learning_rate) # initialising using scikit API
+    bst = LGBMRegressor(n_estimators=100, learning_rate=learning_rate, n_jobs=8, num_leaves=50) # initialising using scikit API
     bst.fit(X_train, y_train,
             eval_set=[(X_test, y_test)],
             early_stopping_rounds=10,
             verbose=False)
-
+#     plot_metric(bst)
     # predicting the test data
     return bst.predict(X_test)
 
@@ -48,7 +51,7 @@ def run_booster(learning_rate):
 # testing 7 values for the learning rate, equally spaced between 0.001 and 1
 
 results = []
-alpha_range = np.linspace(0.001, 1, num=20)
+alpha_range = np.linspace(0.1, 0.5, num=100)
 for alpha in alpha_range:
     predictions_bst = run_booster(alpha)
     results.append([alpha, 

@@ -33,16 +33,29 @@ y = diabetes_df['y']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123, shuffle=True)
 
 # training the linear regressor on the training data
-model_lr = linear_model.LinearRegression()
-model_lr.fit(X_train, y_train)
+models = {}
+predictions = {}
+models['linear'] = linear_model.LinearRegression()
+models['ridge'] = linear_model.Ridge(random_state=0)
+models['lasso'] = linear_model.Lasso(random_state=0)
+models['elasticnet'] = linear_model.ElasticNet(random_state=0)
 
-# predicting the test data
-predictions_lr = model_lr.predict(X_test)
+# print([k, v for (k,v) in models.items()])
+for (model_name, model) in models.items():
+    model.fit(X_train, y_train)
+    predictions[model_name] = model.predict(X_test)
 
 
 # evaluating model
-print('MAE:', mean_absolute_error(y_test, predictions_lr))
-print('R2:', round(r2_score(y_test, predictions_lr),2))
+scores = []
+for (model, prediction) in predictions.items():
+    scores.append([model, 
+                   mean_absolute_error(y_test, prediction),
+                   r2_score(y_test, prediction)])
+
+column_names = ['model_type', 'mean_absolute_error', 'r2_score']
+res_df = pd.DataFrame(scores, columns=column_names).set_index('model_type')
+res_df.sort_values(by='r2_score', ascending=False)
 
 
 # just playing around with different visualisations
