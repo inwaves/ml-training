@@ -58,20 +58,26 @@ def run_perceptron(X_train, y_train, X_test, solver, hidden_layer_sizes, alpha, 
 
 
 
+def test_multiple_models(results, solver):
+    alpha_range = np.linspace(0.001, 0.1, num=7)
+    for alpha in alpha_range:
+        predictions_clf = run_perceptron(X_train, y_train, X_test,
+                                         solver=solver, 
+                                         hidden_layer_sizes=(5,2),
+                                         alpha=alpha, 
+                                         max_iter=500)
+        results.append([solver,
+                        alpha, 
+                        mean_absolute_error(y_test, predictions_clf), 
+                        round(r2_score(y_test, predictions_clf),2)])
+    return results
+
 results = []
-alpha_range = np.linspace(0.001, 0.1, num=7)
-for alpha in alpha_range:
-    predictions_clf = run_perceptron(X_train, y_train, X_test,
-                                     solver='adam', 
-                                     hidden_layer_sizes=(5,2),
-                                     alpha=alpha, 
-                                     max_iter=500)
-    results.append([alpha, 
-                    mean_absolute_error(y_test, predictions_clf), 
-                    round(r2_score(y_test, predictions_clf),2)])
+for solver in ['adam', 'sgd']:
+    results = test_multiple_models(results, solver)
     
-column_names = ['l2_regularisation', 'mean_absolute_error', 'r2_score']
-res_df = pd.DataFrame(results, columns=column_names).set_index('l2_regularisation')
+column_names = ['solver', 'l2_regularisation', 'mean_absolute_error', 'r2_score']
+res_df = pd.DataFrame(results, columns=column_names).set_index('solver')
 res_df.sort_values(by='r2_score', ascending=False)
 
 
