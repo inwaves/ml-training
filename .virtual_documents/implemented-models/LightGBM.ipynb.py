@@ -1,4 +1,4 @@
-from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import pandas as pd
@@ -20,10 +20,10 @@ diabetes_df.columns = [col.lower() for col in diabetes_df]
 diabetes_df.info()
 
 
-diabetes_df.describe()['y']
+diabetes_df.corr()
 
 
-diabetes_df = diabetes_df.drop('ld_lipo', axis=1)
+# diabetes_df = diabetes_df.drop('ld_lipo', axis=1)
 diabetes_df = diabetes_df.drop('thyroid_sh', axis=1)
 
 
@@ -35,10 +35,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 
 def run_booster(learning_rate):
-    bst = XGBRegressor(n_estimators=1000, learning_rate=learning_rate) # initialising using scikit API
+    bst = LGBMRegressor(n_estimators=500, learning_rate=learning_rate) # initialising using scikit API
     bst.fit(X_train, y_train,
             eval_set=[(X_test, y_test)],
-            early_stopping_rounds=5,
+            early_stopping_rounds=10,
             verbose=False)
 
     # predicting the test data
@@ -48,7 +48,7 @@ def run_booster(learning_rate):
 # testing 7 values for the learning rate, equally spaced between 0.001 and 1
 
 results = []
-alpha_range = np.linspace(0.001, 1, num=50)
+alpha_range = np.linspace(0.001, 1, num=20)
 for alpha in alpha_range:
     predictions_bst = run_booster(alpha)
     results.append([alpha, 

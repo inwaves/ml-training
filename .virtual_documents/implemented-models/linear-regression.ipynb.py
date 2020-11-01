@@ -11,7 +11,7 @@ diabetes_df = pd.read_csv('../data/diabetes.csv')
 
 # I want the column names to be a bit more descriptive
 diabetes_df.rename(columns={'S1':'t_cells', 'S2':'ld_lipo', 'S3':'hd_lipo',
-                            'S4':'thyroid-sh', 'S5':'lamotrigine', 'S6':'blood_sugar'}, inplace=True)
+                            'S4':'thyroid_sh', 'S5':'lamotrigine', 'S6':'blood_sugar'}, inplace=True)
 
 diabetes_df.columns = [col.lower() for col in diabetes_df]
 
@@ -20,6 +20,10 @@ diabetes_df.info()
 
 
 diabetes_df.describe()['y']
+
+
+diabetes_df = diabetes_df.drop('ld_lipo', axis=1)
+diabetes_df = diabetes_df.drop('thyroid_sh', axis=1)
 
 
 # let's eliminate the predicted column, then split the data
