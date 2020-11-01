@@ -51,7 +51,9 @@ def run_perceptron(X_train, y_train, X_test, solver, hidden_layer_sizes, alpha, 
     clf = MLPClassifier(solver=solver, alpha=alpha,
                         hidden_layer_sizes=hidden_layer_sizes,
                         random_state=1,
-                        max_iter=max_iter)
+                        max_iter=max_iter,
+                        tol=1e-3, # if I change this back to 1e-4 I get ConvergenceError
+                        n_iter_no_change=10)
 
     clf.fit(X_train, y_train) # train the model
     return clf.predict(X_test) # then predict our test set FIXME: shape of the Series
@@ -59,13 +61,13 @@ def run_perceptron(X_train, y_train, X_test, solver, hidden_layer_sizes, alpha, 
 
 
 def test_multiple_models(results, solver):
-    alpha_range = np.linspace(0.001, 0.1, num=7)
+    alpha_range = np.linspace(0.001, 0.1, num=3)
     for alpha in alpha_range:
         predictions_clf = run_perceptron(X_train, y_train, X_test,
                                          solver=solver, 
                                          hidden_layer_sizes=(5,2),
                                          alpha=alpha, 
-                                         max_iter=500)
+                                         max_iter=1000)
         results.append([solver,
                         alpha, 
                         mean_absolute_error(y_test, predictions_clf), 
