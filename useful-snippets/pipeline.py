@@ -31,7 +31,7 @@ def impute_numerical(df, categorical_column, numerical_column):
         cat_df = pd.concat(cat_frames)
     return cat_df
 
-def drop_correlated_features(df, corr_threshold=0.5):
+def drop_correlated_features(df, target_variable, corr_threshold=0.5):
     """ Calculates the correlation between columns and drops all columns that correlate more than
         corr_threshold with each other (only drops the first column in the pair)
         You shouldn't run this until you understand your data.
@@ -62,7 +62,7 @@ def preprocess_data(src_url=None, src_type='csv', test_size=0.2,
     df.columns = [col.lower() for col in df.columns]
 
     if drop_correlated:
-        correlated_features = drop_correlated_features(df)
+        correlated_features = drop_correlated_features(df, target_variable)
         correlated_features.append(target_variable)
         X = df.drop(correlated_features, axis=1)
     else:
