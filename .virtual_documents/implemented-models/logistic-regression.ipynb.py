@@ -19,7 +19,15 @@ diabetes_df.columns = [col.lower() for col in diabetes_df.columns]
 diabetes_df.info()
 
 
-diabetes_df.corr()
+correlations = diabetes_df.corr().drop(['outcome'], axis=1).drop('outcome', axis=0)
+correlation_ranking = []
+for col in correlations.columns:
+    
+    correlation_ranking.append([col, correlations.loc[:, col][correlations.loc[:, col] < 1].abs().idxmax(),
+         correlations.loc[:, col][correlations.loc[:, col] < 1].abs().max()])
+    
+correlation_ranking.sort(key= lambda x : x[2], reverse=True)
+print(correlation_ranking)
 
 
 # plt.figure(figsize=(12, 7))

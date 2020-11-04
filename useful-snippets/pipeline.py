@@ -1,7 +1,7 @@
 import pandas as pd # data manipulation
 from sklearn.model_selection import train_test_split
 
-# TODO: build a proper pipeline
+# TODO: scaling and normalisation
 
 def impute_categorical(df, categorical_column1, categorical_column2):
     """ Imputes categorical_column2 using the mode of it corresponding to each value in categorical_column1
@@ -31,15 +31,43 @@ def impute_numerical(df, categorical_column, numerical_column):
         cat_df = pd.concat(cat_frames)
     return cat_df
 
-def preprocess_data():
-    """ Pre-processes the dataset with common data cleaning methods.
+def drop_correlated_features(df, corr_threshold=0.5):
+    """ Calculates the correlation between columns and drops all columns that correlate more than
+        corr_threshold with each other (only drops the first column in the pair)
+        You shouldn't run this until you understand your data.
     """
+    correlations = df.corr().drop([target_variable], axis=1).drop(target_variable, axis=0)
+    correlation_ranking = []
+    for col in correlations.columns:
+        correlation_ranking.append([col, correlations.loc[:, col][correlations.loc[:, col] < 1].abs().idxmax(),
+            correlations.loc[:, col][correlations.loc[:, col] < 1].abs().max()])
 
-    diabetes_df = pd.read_csv('../data/diabetes-classification.csv')
+    correlation_ranking.sort(key= lambda x : x[2], reverse=True)
+        
+    return [ranking[0] for ranking in correlation_ranking if float(ranking[2]) > corr_threshold]
 
-    diabetes_df.columns = [col.lower() for col in diabetes_df.columns]
+def preprocess_data(src_url=None, src_type='csv', test_size=0.2,
+                    target_variable=None, drop_correlated=False):
+    """ Pre-processes the dataset with common data cleaning methods. 
 
-    X = diabetes_df.drop(['outcome', 'age', 'skinthickness'], axis=1) # dropping correlated variables
-    y = diabetes_df['outcome']
+    """
+    if src_url==None:
+        raise Exception('The data source URL is empty. Cannot import data.')
 
-    return train_test_split(X, y, test_size=0.2, random_state=0, shuffle=True)
+    if src_type == 'csv':
+        df = pd.read_csv(src_url)
+    elif src_type == 'json':
+        df = pd.read_json(src_url)
+
+    df.columns = [col.lower() for col in df.columns]
+
+    if drop_correlated:
+        correlated_features = drop_correlated_features(df)
+        correlated_features.append(target_variable)
+        X = df.drop(correlated_features, axis=1)
+    else:
+        X = df.drop([target_variable], axis=1)
+
+    y = df[target_variable]
+
+    return train_test_split(X, y, test_size=test_size, random_state=0, shuffle=True)
