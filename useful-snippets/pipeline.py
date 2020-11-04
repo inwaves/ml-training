@@ -31,6 +31,7 @@ def impute_numerical(df, categorical_column, numerical_column):
         cat_df = pd.concat(cat_frames)
     return cat_df
 
+# TODO: before dropping correlated features, find which of each pair is more important in the prediction
 def drop_correlated_features(df, target_variable, corr_threshold=0.5):
     """ Calculates the correlation between columns and drops all columns that correlate more than
         corr_threshold with each other (only drops the first column in the pair)
@@ -39,6 +40,7 @@ def drop_correlated_features(df, target_variable, corr_threshold=0.5):
     correlations = df.corr().drop([target_variable], axis=1).drop(target_variable, axis=0)
     correlation_ranking = []
     for col in correlations.columns:
+        # correlation needs to be below 1.0 since a column always correlates perfectly with itself
         correlation_ranking.append([col, correlations.loc[:, col][correlations.loc[:, col] < 1].abs().idxmax(),
             correlations.loc[:, col][correlations.loc[:, col] < 1].abs().max()])
 
