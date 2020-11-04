@@ -1,8 +1,5 @@
-import numpy as np # linear algebra
 import pandas as pd # data manipulation
 import matplotlib.pyplot as plt # visualisation
-import altair as alt # visualisation
-import seaborn as sns # visualisation
 import eli5 # for permutation importance
 from pdpbox import pdp, get_dataset, info_plots # for partial dependence plotting 
 from IPython.display import display # for permutation importance display
@@ -22,10 +19,10 @@ def preprocess_data():
     X = diabetes_df.drop(['outcome', 'age', 'skinthickness'], axis=1) # dropping correlated variables
     y = diabetes_df['outcome']
 
-    train_test_split(X, y, test_size=0.2, random_state=0, shuffle=True)
+    return train_test_split(X, y, test_size=0.2, random_state=0, shuffle=True)
 
 weights = []
-def show_model_permutations(lin_model=None):
+def show_model_permutations(X_test=None, y_test=None, lin_model=None):
     """ Appends permutation importance for the labels on one model to a list.
         Prints when called with no model.
     """
@@ -34,17 +31,17 @@ def show_model_permutations(lin_model=None):
             display(display_weights)
         return
     
-    perm_importance = calc_model_perm_importance(lin_model)
+    perm_importance = calc_model_perm_importance(X_test, y_test, lin_model)
     weights.append(eli5.show_weights(perm_importance, feature_names = X_test.columns.tolist()))
     
-def calc_model_perm_importance(lin_model):
+def calc_model_perm_importance(X_test, y_test, lin_model):
     """ Calculates the permutation importance for the labels on one model. 
     """
 
     return eli5.sklearn.PermutationImportance(lin_model,
                                                         random_state=1).fit(X_test, y_test)
 
-def print_results(lin_model, predictions_lin_model, solver,
+def print_results(X_test, y_test, lin_model, predictions_lin_model, solver,
                  confusion_matrix=False):
     """ Prints the confusion matrix and precision, accuracy, recall and ROC AUC.
     """
@@ -88,10 +85,10 @@ def logistic_regression(X_train, X_test, y_train, y_test):
         lin_model = parameterise_model(X_train, y_train,
                                         solver, C=0.8,
                                         max_iter=1000)
-        show_model_permutations(lin_model)
+        show_model_permutations(X_test, y_test, lin_model)
         
         predictions_lin_model = lin_model.predict(X_test)
-        print_results(lin_model, predictions_lin_model, solver)
+        print_results(X_test, y_test, lin_model, predictions_lin_model, solver)
     
     show_partial_dep_plots(parameterise_model(X_train, y_train, solver='newton-cg'), X_test)
     show_model_permutations() # comment out if you don't want to see permutation importance 
