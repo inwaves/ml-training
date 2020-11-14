@@ -26,7 +26,7 @@ def show_model_permutations(X_test=None, y_test=None, lin_model=None):
     """ Appends permutation importance for the labels on one model to a list.
         Prints when called with no model.
     """
-    if lin_model==None:         
+    if lin_model is None:         
         for display_weights in weights:
             display(display_weights)
         return

@@ -51,7 +51,7 @@ def preprocess_data(src_url=None, src_type='csv', test_size=0.2,
     """ Pre-processes the dataset with common data cleaning methods. 
 
     """
-    if src_url==None:
+    if src_url is None:
         raise Exception('The data source URL is empty. Cannot import data.')
 
     if src_type == 'csv':
