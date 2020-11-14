@@ -46,13 +46,12 @@ def train_model(train, valid, test=None, feature_cols=None):
     valid_pred = bst.predict(valid[feature_cols])
     valid_score = metrics.roc_auc_score(valid['is_attributed'], valid_pred)
     print(f"Validation AUC score: {valid_score}")
-    
+
     if test is not None: 
         test_pred = bst.predict(test[feature_cols])
         test_score = metrics.roc_auc_score(test['is_attributed'], test_pred)
         return bst, valid_score, test_score
-    else:
-        return bst, valid_score
+    return bst, valid_score
 
 print("Baseline model score")
 train, valid, test = get_data_splits(clicks)
