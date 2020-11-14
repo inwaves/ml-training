@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 from scipy import stats # for Box-Cox Transformation
 from mlxtend.preprocessing import minmax_scaling # for min_max scaling

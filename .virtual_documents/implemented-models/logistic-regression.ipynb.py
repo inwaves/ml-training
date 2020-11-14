@@ -1,10 +1,8 @@
-import numpy as np # linear algebra
 import pandas as pd # data manipulation
 import matplotlib.pyplot as plt # visualisation
 import altair as alt # visualisation
-import seaborn as sns # visualisation
 import eli5 # for permutation importance
-from pdpbox import pdp, get_dataset, info_plots # for partial dependence plotting 
+from pdpbox import pdp # for partial dependence plotting 
 from IPython.display import display # for permutation importance display
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split

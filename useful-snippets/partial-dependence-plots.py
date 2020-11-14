@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from pdpbox import pdp, get_dataset, info_plots # for partial dependence plotting 
+from pdpbox import pdp # for partial dependence plotting 
 
 def show_partial_dep_plots(lin_model, X_test):
     """ Prints partial dependence plots for each feature in the dataset.
