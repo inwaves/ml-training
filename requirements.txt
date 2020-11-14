@@ -1,3 +1,4 @@
+pytest
 pandas
 matplotlib
 eli5
