@@ -1,0 +1,7 @@
+pytest
+pandas
+matplotlib
+eli5
+pdpbox
+IPython
+scikit-learn
