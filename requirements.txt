@@ -1,3 +1,5 @@
+pre-commit
+coveralls
 pytest
 pandas
 matplotlib
