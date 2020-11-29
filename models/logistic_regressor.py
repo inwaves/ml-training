@@ -118,8 +118,9 @@ def logistic_regression(X_train, X_test, y_train, y_test):
 
 
 def main():
-    X_train, X_test, y_train, y_test = preprocess_data()
-    logistic_regression(X_train, X_test, y_train, y_test)
+    print("hello")
+    # X_train, X_test, y_train, y_test = preprocess_data()
+    # logistic_regression(X_train, X_test, y_train, y_test)
 
 
 if __name__ == "__main__":
